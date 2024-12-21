@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Prediction by Name</title>
+    <link rel="shortcut icon" href="eagle.avif" type="image/avif">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="stylesheet.css">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#333" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px transparent;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            width: 100%;
+            margin: 20px 0;
+            border: 2px solid blue;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Age Prediction by Name</h1>
+        <input type="text" id="name-input" placeholder="Enter a name" />
+        <button onclick="fetchAgePrediction()">Get Predicted Age</button>
+        <div class="result" id="result"></div>
+        <div class="error" id="error-message"></div>
+    </div>
+
+    <script>
+        // Function to fetch the predicted age from the Agify API
+        function fetchAgePrediction() {
+            const name = document.getElementById('name-input').value.trim();
+            const resultDiv = document.getElementById('result');
+            const errorMessageDiv = document.getElementById('error-message');
+
+            // Clear previous results and error messages
+            resultDiv.innerHTML = '';
+            errorMessageDiv.innerHTML = '';
+
+            if (!name) {
+                errorMessageDiv.innerHTML = 'Please enter a name.';
+                return;
+            }
+
+            const apiUrl = `https://api.agify.io/?name=${name}`;
+
+            // Fetch data from the Agify API
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    // Display the predicted age if the data is valid
+                    if (data.age) {
+                        resultDiv.innerHTML = `The predicted age for the name <strong>${name}</strong> is <strong>${data.age}</strong> years old.`;
+                    } else {
+                        errorMessageDiv.innerHTML = 'Could not predict the age for the given name.';
+                    }
+                })
+                .catch(error => {
+                    // Handle errors in fetching the data
+                    errorMessageDiv.innerHTML = `Error fetching data: ${error.message}`;
+                });
+        }
+    </script>
+
+</body>
+</html>
